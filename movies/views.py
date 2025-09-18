@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Movie, Review
 from django.contrib.auth.decorators import login_required
+from .models import ReviewReply
 
 def index(request):
     search_term = request.GET.get('search')
@@ -33,6 +34,22 @@ def create_review(request, id):
         review.movie = movie
         review.user = request.user
         review.save()
+        return redirect('movies.show', id=id)
+    else:
+        return redirect('movies.show', id=id)
+
+
+@login_required
+def create_review_reply(request, id, review_id):
+    """Create a reply to an existing review and redirect back to the movie page."""
+    if request.method == 'POST' and request.POST.get('comment', '').strip() != '':
+        movie = Movie.objects.get(id=id)
+        review = Review.objects.get(id=review_id, movie=movie)
+        reply = ReviewReply()
+        reply.comment = request.POST['comment']
+        reply.review = review
+        reply.user = request.user
+        reply.save()
         return redirect('movies.show', id=id)
     else:
         return redirect('movies.show', id=id)
