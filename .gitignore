@@ -1,0 +1,18 @@
+# Database
+db.sqlite
+db.sqlite3
+
+# Python artifacts
+__pycache__/
+*.pyc
+
+# Django
+*.log
+local_settings.py
+
+# Media
+/media/
+
+# Env
+.env
+venv/
