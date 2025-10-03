@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>{{ template_data.title }}</h1>
+<p><a href="{% url 'petitions.create' %}">Create a petition</a></p>
+<ul>
+  {% for p in template_data.petitions %}
+    <li>
+      <a href="{% url 'petitions.show' p.id %}">{{ p.title }}</a>
+      — yes: {{ p.yes_count }} | no: {{ p.no_count }}
+    </li>
+  {% empty %}
+    <li>No petitions yet.</li>
+  {% endfor %}
+</ul>
+{% endblock %}
