@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>{{ template_data.petition.title }}</h1>
+<p>{{ template_data.petition.description }}</p>
+<p>Created by {{ template_data.petition.creator.username }} at {{ template_data.petition.created_at }}</p>
+<p>Yes: {{ template_data.petition.yes_count }} — No: {{ template_data.petition.no_count }}</p>
+
+{% if user.is_authenticated %}
+  <form method="post" action="{% url 'petitions.vote' template_data.petition.id %}">
+    {% csrf_token %}
+    <button name="vote" value="yes">Vote Yes</button>
+    <button name="vote" value="no">Vote No</button>
+  </form>
+{% else %}
+  <p><a href="{% url 'accounts.login' %}">Log in</a> to vote.</p>
+{% endif %}
+
+<a href="{% url 'petitions.index' %}">Back to petitions</a>
+{% endblock %}
