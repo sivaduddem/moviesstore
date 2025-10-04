@@ -1,3 +1,4 @@
+#apps.py
 from django.apps import AppConfig  # Import Django's application configuration base class
 
 

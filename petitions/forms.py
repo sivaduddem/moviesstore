@@ -1,4 +1,5 @@
-from django import forms  # Django forms module for building form classes
+#forms.py
+from django import forms  # Django forms module for building form classe
 from .models import Petition  # Import the Petition model to create a ModelForm
 
 

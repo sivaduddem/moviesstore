@@ -1,4 +1,4 @@
-from django.db import models  # Import Django models module for defining database models
+from django.db import models  # Import Django models module for defining database model
 from django.contrib.auth.models import User  # Import the built-in User model for relations
 
 

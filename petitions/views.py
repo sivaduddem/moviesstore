@@ -1,7 +1,8 @@
-from django.shortcuts import render, redirect, get_object_or_404  # Django shortcuts for common patterns
-from django.contrib.auth.decorators import login_required  # Decorator to require authentication
-from .models import Petition  # Petition model defined in this app
-from .forms import PetitionForm  # Form used to create petitions
+#views.py
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from .models import Petition
+from .forms import PetitionForm
 
 
 def index(request):
@@ -9,16 +10,16 @@ def index(request):
 
     The template expects `template_data` with `title` and `petitions`.
     """
-    petitions = Petition.objects.all().order_by('-created_at')  # Query for all petitions
-    template_data = {'title': 'Petitions', 'petitions': petitions}  # Context for template
-    return render(request, 'petitions/index.html', {'template_data': template_data})  # Render list template
+    petitions = Petition.objects.all().order_by('-created_at') 
+    template_data = {'title': 'Petitions', 'petitions': petitions}
+    return render(request, 'petitions/index.html', {'template_data': template_data})
 
 
 def show(request, petition_id):
     """Render a single petition's detail view by id."""
-    petition = get_object_or_404(Petition, id=petition_id)  # 404 if not found
-    template_data = {'title': petition.title, 'petition': petition}  # Context for template
-    return render(request, 'petitions/show.html', {'template_data': template_data})  # Render detail template
+    petition = get_object_or_404(Petition, id=petition_id)
+    template_data = {'title': petition.title, 'petition': petition}
+    return render(request, 'petitions/show.html', {'template_data': template_data})
 
 
 @login_required
@@ -30,14 +31,13 @@ def create(request):
     if request.method == 'GET':
         return render(request, 'petitions/create.html', {'template_data': {'title': 'Create Petition', 'form': PetitionForm()}})
 
-    form = PetitionForm(request.POST)  # Bind form for POST
+    form = PetitionForm(request.POST)
     if form.is_valid():
-        petition = form.save(commit=False)  # Create model instance but don't save yet
-        petition.creator = request.user  # Set creator to current user
-        petition.save()  # Persist to DB
-        return redirect('petitions.show', petition_id=petition.id)  # Redirect to the new petition
+        petition = form.save(commit=False)
+        petition.creator = request.user
+        petition.save()
+        return redirect('petitions.show', petition_id=petition.id)
 
-    # If form invalid, re-render with errors
     return render(request, 'petitions/create.html', {'template_data': {'title': 'Create Petition', 'form': form}})
 
 
@@ -49,19 +49,19 @@ def vote(request, petition_id):
     Casting a vote will add the user to the respective M2M and remove them
     from the opposite vote so a user has at most one active vote.
     """
-    petition = get_object_or_404(Petition, id=petition_id)  # Fetch petition or 404
+    petition = get_object_or_404(Petition, id=petition_id)
 
     if request.method != 'POST':
-        return redirect('petitions.show', petition_id=petition_id)  # Only POST allowed for voting
+        return redirect('petitions.show', petition_id=petition_id)
 
-    vote_value = request.POST.get('vote')  # Read vote value from form
-    user = request.user  # Current user
+    vote_value = request.POST.get('vote')
+    user = request.user
 
     if vote_value == 'yes':
-        petition.yes_votes.add(user)  # Record yes
-        petition.no_votes.remove(user)  # Remove any previous no
+        petition.yes_votes.add(user)
+        petition.no_votes.remove(user)
     elif vote_value == 'no':
-        petition.no_votes.add(user)  # Record no
-        petition.yes_votes.remove(user)  # Remove any previous yes
+        petition.no_votes.add(user)
+        petition.yes_votes.remove(user)
 
-    return redirect('petitions.show', petition_id=petition_id)  # Redirect back to detail view
+    return redirect('petitions.show', petition_id=petition_id)
